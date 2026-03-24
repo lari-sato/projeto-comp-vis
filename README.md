@@ -14,6 +14,8 @@ O programa é executado via linha de comando, recebendo como argumento o caminho
 
 ### 1. Carregamento de imagem
 
+#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
+
 O programa inicia carregando a imagem fornecida como argumento utilizando a função `IMG_Load()` da biblioteca **SDL_image**.
 
 Essa função:
@@ -30,6 +32,8 @@ Caso o arquivo não exista ou esteja em um formato inválido:
 ---
 
 ### 2. Análise e conversão para escala de cinza
+
+#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
 
 Após o carregamento, o programa apresenta as dimensões da imagem como evidência de que foi carregada corretamente.
 
