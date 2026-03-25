@@ -131,8 +131,8 @@ int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *
         return SDL_APP_FAILURE;
     }
 
-    int hist_width = 650;
-    int hist_height = img_height;
+    int hist_width = 700;
+    int hist_height = 500;
     int offset_x = img_width + 50;
     int offset_y = 0;
 
