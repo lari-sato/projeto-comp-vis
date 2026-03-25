@@ -67,6 +67,16 @@ As janelas ficam ativas até que o usuário as feche.
 ---
 ### 4. Análise e exibição do histograma
 
+#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
+
+Após a criação das janelas, o programa calcula o histograma real da imagem. Ele percorre todos os pixels da imagem em escala de cinza e contabiliza a quantidade de pixels para cada tom (de 0 a 255).
+
+Com esses dados, o sistema realiza cálculos estatísticos para classificar a imagem:
+- **Média de intensidade:** Define se a imagem é "Escura" (< 85), "Média" (< 170) ou "Clara" (>= 170).
+- **Desvio Padrão:** Avalia o espalhamento das cores para definir o contraste como "Baixo" (< 40), "Médio" (< 80) ou "Alto" (>= 80).
+
+Por fim, utilizando a biblioteca **SDL3_ttf** e uma fonte (Arial) carregada pelo sistema, essas informações e seus valores numéricos são renderizados em formato de texto diretamente na janela secundária, acima do gráfico de barras.
+
 ---
 ### 5. Equalização do histograma
 
@@ -119,6 +129,6 @@ Além disso:
 ## 🤝 Contribuições
 
 - Beatriz Lima de Moura
-- Giovana Simões Franco
+- Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela)
 - Julia Santos Oliveira
 - Larissa Yuri Sato: criação do repositório, documentação inicial e desenvolvimento da função do item 3 (GUI)

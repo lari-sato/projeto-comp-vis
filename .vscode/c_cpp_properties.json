@@ -4,8 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/jujus/Documents/compvis/SDL3/include",
-                "C:/Users/jujus/Documents/compvis/SDL3_image/include"
+                "C:/Users/giova/compvis1/SDL3/include",
+                "C:/Users/giova/compvis1/SDL3_image/include",
+                "C:/Users/giova/compvis1/SDL3_ttf/include"
             ],
             "defines": [
                 "_DEBUG",

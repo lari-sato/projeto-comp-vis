@@ -38,14 +38,14 @@ int main(int argc, char *argv[]) {
 
     int histograma[256] = {0};
 
-    // Valores fictícios para testar a GUI do histograma
-    histograma[64]  = 500;
-    histograma[128] = 1000;
-    histograma[192] = 300;
+    calcularHistograma(img.imagemCinza, histograma);
+    
+    int total_pixels = img.imagemCinza->w * img.imagemCinza->h;
+    analisarHistograma(histograma, total_pixels);
 
     rodarGui(img.imagemCinza->w, img.imagemCinza->h, histograma, &img);
 
-    /* (Itens 4, 5, 6 vão aqui) */
+    /* (Itens 5, 6 vão aqui) */
 
     /* Liberando memória */
     liberarImagem(&img);
