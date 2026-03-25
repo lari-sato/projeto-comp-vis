@@ -114,6 +114,112 @@ bool prepararImagem(const char *caminho, DadosImagem *img) {
     return true;
 }
 
+int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *img) {
+    GUI gui = {0};
+
+    if (!SDL_CreateWindowAndRenderer("Processamento de Imagem", img_width, img_height, 0, 
+                                   &gui.janelaPrincipal, &gui.rendererPrincipal)) {
+        SDL_Log("Erro ao criar janela: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_Texture *img_texture = SDL_CreateTextureFromSurface(gui.rendererPrincipal, img->imagemCinza);
+    if (!img_texture) {
+        SDL_Log("Erro ao criar textura: %s", SDL_GetError());
+        SDL_DestroyRenderer(gui.rendererPrincipal);
+        SDL_DestroyWindow(gui.janelaPrincipal);
+        return SDL_APP_FAILURE;
+    }
+
+    int hist_width = 650;
+    int hist_height = img_height;
+    int offset_x = img_width + 50;
+    int offset_y = 0;
+
+    gui.janelaHistograma = SDL_CreatePopupWindow(
+        gui.janelaPrincipal,
+        offset_x,
+        offset_y,
+        hist_width,
+        hist_height,
+        SDL_WINDOW_POPUP_MENU
+    );
+
+    if (!gui.janelaHistograma) {
+        SDL_Log("Erro ao criar janela de histograma: %s", SDL_GetError());
+        SDL_DestroyRenderer(gui.rendererPrincipal);
+        SDL_DestroyWindow(gui.janelaPrincipal);
+        return SDL_APP_FAILURE;
+    }
+
+    gui.rendererHistograma = SDL_CreateRenderer(gui.janelaHistograma, NULL);
+    if (!gui.rendererHistograma) {
+        SDL_Log("Erro ao criar renderer de histograma: %s", SDL_GetError());
+        SDL_DestroyRenderer(gui.rendererPrincipal);
+        SDL_DestroyWindow(gui.janelaHistograma);
+        SDL_DestroyWindow(gui.janelaPrincipal);
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_Event event;
+    bool isRunning = true;
+
+    while (isRunning) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
+                isRunning = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(gui.rendererPrincipal, 0, 0, 0, 255);
+        SDL_RenderClear(gui.rendererPrincipal);
+
+        SDL_FRect dst = { 0, 0, (float)img_width, (float)img_height };
+        SDL_RenderTexture(gui.rendererPrincipal, img_texture, NULL, &dst);
+
+        SDL_RenderPresent(gui.rendererPrincipal);
+
+        SDL_SetRenderDrawColor(gui.rendererHistograma, 50, 50, 50, 255);
+        SDL_RenderClear(gui.rendererHistograma);
+
+        int bar_x = 10;
+        int bar_y = 20;
+        int bar_w = 4;
+        int bar_h_max = hist_height - 100;
+        int num_barras = 64;
+
+        int max_val = 0;
+        for (int i = 0; i < 256; i++) {
+            if (histograma[i] > max_val) max_val = histograma[i];
+        }
+
+        if (max_val > 0) {
+            for (int i = 0; i < num_barras; i++) {
+                int index = (i * 256) / num_barras;
+                float ratio = (float)histograma[index] / (float)max_val;
+                int bar_h = (int)(ratio * bar_h_max);
+                
+                SDL_SetRenderDrawColor(gui.rendererHistograma, 255, 255, 255, 255);
+                SDL_FRect bar = {
+                    (float)(bar_x + i * (bar_w + 1)),
+                    (float)(bar_y + bar_h_max - bar_h),
+                    (float)bar_w,
+                    (float)bar_h
+                };
+                SDL_RenderFillRect(gui.rendererHistograma, &bar);
+            }
+        }
+        SDL_RenderPresent(gui.rendererHistograma);
+    }
+
+    SDL_DestroyRenderer(gui.rendererHistograma);
+    SDL_DestroyRenderer(gui.rendererPrincipal);
+    SDL_DestroyWindow(gui.janelaHistograma);
+    SDL_DestroyWindow(gui.janelaPrincipal);
+
+    return SDL_APP_SUCCESS;
+}
+
 void liberarImagem(DadosImagem *img) {
     if (img == NULL) return;
 

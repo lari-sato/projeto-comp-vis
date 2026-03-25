@@ -36,7 +36,16 @@ int main(int argc, char *argv[]) {
     IMG_SavePNG(img.imagemCinza, "saida.png");
     printf("Imagem em escala de cinza salva como saida.png\n");
 
-    /* (Itens 3, 4, 5, 6 vão aqui) */
+    int histograma[256] = {0};
+
+    // Valores fictícios para testar a GUI do histograma
+    histograma[64]  = 500;
+    histograma[128] = 1000;
+    histograma[192] = 300;
+
+    rodarGui(img.imagemCinza->w, img.imagemCinza->h, histograma, &img);
+
+    /* (Itens 4, 5, 6 vão aqui) */
 
     /* Liberando memória */
     liberarImagem(&img);
