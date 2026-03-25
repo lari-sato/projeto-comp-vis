@@ -14,8 +14,6 @@ O programa é executado via linha de comando, recebendo como argumento o caminho
 
 ### 1. Carregamento de imagem
 
-#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
-
 O programa inicia carregando a imagem fornecida como argumento utilizando a função `IMG_Load()` da biblioteca **SDL_image**.
 
 Essa função:
@@ -32,8 +30,6 @@ Caso o arquivo não exista ou esteja em um formato inválido:
 ---
 
 ### 2. Análise e conversão para escala de cinza
-
-#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
 
 Após o carregamento, o programa apresenta as dimensões da imagem como evidência de que foi carregada corretamente.
 
@@ -53,8 +49,6 @@ Se a imagem for colorida, ela é convertida para escala de cinza utilizando a f�
 
 ---
 ### 3. Interface gráfica de usuário (GUI) com duas janelas
-
-#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
 
 Com a imagem convertida para escala de cinzas, o programa irá abrir uma GUI com duas janelas: a principal (à esquerda) mostra a imagem carregada e a filha (à direita) mostra o histograma da imagem carregada.
 
