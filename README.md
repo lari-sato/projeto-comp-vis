@@ -134,7 +134,7 @@ Além disso:
 
 ## 🤝 Contribuições
 
-- Beatriz Lima de Moura:
+- Beatriz Lima de Moura: desenvolvimento do item 5 (equalização do histograma e ajuste de contraste)
 - Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela)
 - Julia Santos Oliveira
 - Larissa Yuri Sato: criação do repositório, documentação inicial e desenvolvimento da função do item 3 (GUI)
