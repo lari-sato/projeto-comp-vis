@@ -275,3 +275,40 @@ void analisarHistograma(int *histograma, int total_pixels) {
     
     printf("\n");
 }
+void equalizarImagem(SDL_Surface *surface, int *histograma) {
+    if (surface == NULL) return;
+
+    int total_pixels = surface->w * surface->h;
+    int cdf[256] = {0}; 
+    cdf[0] = histograma[0];
+    for (int i = 1; i < 256; i++) {
+        cdf[i] = cdf[i - 1] + histograma[i];
+    }
+
+    int cdf_min = 0;
+    for (int i = 0; i < 256; i++) {
+        if (cdf[i] > 0) {
+            cdf_min = cdf[i];
+            break;
+        }
+    }
+
+    int nova_cor[256] = {0};
+    for (int i = 0; i < 256; i++) {
+        float calculo = ((float)(cdf[i] - cdf_min) / (float)(total_pixels - cdf_min)) * 255.0f;
+        if (calculo < 0) calculo = 0;
+        if (calculo > 255) calculo = 255;
+        nova_cor[i] = (int)round(calculo); 
+    }
+
+    for (int y = 0; y < surface->h; y++) {
+        for (int x = 0; x < surface->w; x++) {
+            Uint8 r, g, b, a;
+            if (SDL_ReadSurfacePixel(surface, x, y, &r, &g, &b, &a)) {
+                Uint8 cor_equalizada = (Uint8)nova_cor[r];
+                SDL_WriteSurfacePixel(surface, x, y, cor_equalizada, cor_equalizada, cor_equalizada, a);
+            }
+        }
+    }
+    printf("A imagem foi equalizada com sucesso\n");
+}

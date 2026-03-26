@@ -80,6 +80,12 @@ Por fim, utilizando a biblioteca **SDL3_ttf** e uma fonte (Arial) carregada pelo
 ---
 ### 5. Equalização do histograma
 
+#### 🔹 Arquivos: `processamento.c` + `processamento.h` 
+
+A equalização do histograma foi implementada para melhorar o contraste da imagem. O programa calcula a Frequência Acumulada (CDF - Cumulative Distribution Function) a partir do histograma original.
+
+Aplicando a fórmula matemática de equalização, os tons de cinza são redistribuídos de forma proporcional. Isso "estica" o contraste da imagem, forçando-a a utilizar toda a escala de luminosidade disponível (de 0 a 255), resultando em pretos mais intensos e brancos mais brilhantes.
+
 ---
 ### 6. Salvar imagem
 
@@ -128,7 +134,7 @@ Além disso:
 
 ## 🤝 Contribuições
 
-- Beatriz Lima de Moura
+- Beatriz Lima de Moura:
 - Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela)
 - Julia Santos Oliveira
 - Larissa Yuri Sato: criação do repositório, documentação inicial e desenvolvimento da função do item 3 (GUI)

@@ -44,10 +44,9 @@ int main(int argc, char *argv[]) {
     analisarHistograma(histograma, total_pixels);
 
     rodarGui(img.imagemCinza->w, img.imagemCinza->h, histograma, &img);
+    equalizarImagem(img.imagemCinza, histograma);
+    /* ( 6 vai aqui) */
 
-    /* (Itens 5, 6 vão aqui) */
-
-    /* Liberando memória */
     liberarImagem(&img);
     SDL_Quit();
 

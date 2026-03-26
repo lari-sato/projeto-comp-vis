@@ -25,5 +25,6 @@ void liberarImagem(DadosImagem *img);
 int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *img);
 void calcularHistograma(SDL_Surface *surface, int *histograma);
 void analisarHistograma(int *histograma, int total_pixels);
+void equalizarImagem(SDL_Surface *surface, int *histograma);
 
 #endif
