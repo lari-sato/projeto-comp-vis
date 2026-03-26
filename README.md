@@ -82,6 +82,10 @@ A equalização do histograma foi implementada para melhorar o contraste da imag
 
 Aplicando a fórmula matemática de equalização, os tons de cinza são redistribuídos de forma proporcional. Isso "estica" o contraste da imagem, forçando-a a utilizar toda a escala de luminosidade disponível (de 0 a 255), resultando em pretos mais intensos e brancos mais brilhantes.
 
+Ela acontece por meio de um botão desenhado manualmente com primitivas da SDL na janela secundária. A interface responde ativamente às ações do usuário: a cor do botão permanece em um azul neutro, muda para azul claro quando o mouse passa por cima e escurece no momento exato do clique. Ao acionar o botão, o programa equaliza o histograma, atualizando instantaneamente a imagem com maior contraste na janela principal e o gráfico esticado na janela secundária. 
+
+Esse botão atua como um interruptor flexível, permitindo que um novo clique reverta o conteúdo de ambas as janelas para a versão original em escala de cinza, sem a necessidade de recarregar a imagem do disco. Para manter a navegação intuitiva, o texto interno do botão reflete dinamicamente a próxima ação possível, alternando entre "Equalizar" e "Ver original".
+
 ---
 ### 6. Salvar imagem
 
