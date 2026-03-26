@@ -57,12 +57,11 @@ Se a imagem for colorida, ela é convertida para escala de cinza utilizando a f�
 ### 3. Interface gráfica de usuário (GUI) com duas janelas
 
 Com a imagem convertida para escala de cinzas, o programa irá abrir uma GUI com duas janelas: a principal (à esquerda) mostra a imagem carregada e a filha (à direita) mostra o histograma da imagem carregada.
-
 O histograma não mostra todas as barras de cores (de 0 a 256) devido a limitações de tamanho da janela. Por isso, os valores dos pixels são mapeados e agrupados em apenas 64 barras para visualização.
 
-Utilizando as funções de criação de janelas do SDL, cria-se as duas janelas: a principal, com tamanho igual a imagem carregada, e a filha, com tamanho fixado em 700x500. Os renderers são utilizados para a parte visual, mostrando a imagem carregada e o histograma para o usuário.
+Utilizando as funções do SDL , cria-se as duas janelas: a principal (com tamanho igual a imagem carregada) utilizando `SDL_CreateWindowAndRenderer()` (cria tanto a janela quanto o renderer ao mesmo tempo) e a filha (com tamanho fixado em 700x500) com `SDL_CreatePopupWindow()` (para a janela) e `SDL_CreateRenderer()` (para o renderer). Os renderers são utilizados para a parte visual, mostrando a imagem carregada e o histograma para o usuário.
 
-As janelas ficam ativas até que o usuário as feche.
+As janelas ficam ativas por um laço while, que roda até que identifique que o usuário as fechou.
 
 ---
 ### 4. Análise e exibição do histograma
