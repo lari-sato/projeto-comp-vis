@@ -5,10 +5,10 @@
 # 🏞️ Projeto 1 - Processamento de imagens
 
 # Integrantes:
-Beatriz Lima de Moura 10416616
-Giovana Simões Franco 10417646
-Julia Santos Oliveira 10417672
-Larissa Yuri Sato 10418318
+- Beatriz Lima de Moura     | RA: 10416616
+- Giovana Simões Franco     | RA: 10417646
+- Julia Santos Oliveira     | RA: 10417672
+- Larissa Yuri Sato         | RA: 10418318
 
 ## 🎯 Objetivo
 
