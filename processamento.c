@@ -1,3 +1,8 @@
+// Beatriz Lima de Moura 10416616
+// Giovana Simões Franco 10417646
+// Julia Santos Oliveira 10417672
+// Larissa Yuri Sato 10418318
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL3/SDL.h>

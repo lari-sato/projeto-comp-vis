@@ -4,6 +4,12 @@
 
 # 🏞️ Projeto 1 - Processamento de imagens
 
+# Integrantes:
+Beatriz Lima de Moura 10416616
+Giovana Simões Franco 10417646
+Julia Santos Oliveira 10417672
+Larissa Yuri Sato 10418318
+
 ## 🎯 Objetivo
 
 Este projeto consiste no desenvolvimento de um software de processamento de imagens em linguagem C, utilizando a biblioteca SDL (Simple DirectMedia Layer) e SDL_image.
