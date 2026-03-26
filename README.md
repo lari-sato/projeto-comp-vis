@@ -88,9 +88,11 @@ Esse botão atua como um interruptor flexível, permitindo que um novo clique re
 ---
 ### 6. Salvar imagem
 
-Após a aplicação da equalização e o fechamento da interface gráfica pelo usuário, a imagem resultante com o contraste aprimorado é salva automaticamente no disco.
+A funcionalidade de exportação permite gravar o resultado final diretamente no computador. 
 
-Utilizando a função `IMG_SavePNG()` da biblioteca **SDL_image**, o arquivo final é gerado no mesmo diretório do programa com o nome padrão `equalizada.png`.
+Quando o programa detecta que a tecla "S" foi pressionada no teclado, ele captura a versão da imagem que está atualmente visível na janela principal e a salva em um arquivo nomeado obrigatoriamente como `output_image.png`. 
+
+Além disso, a rotina de salvamento funciona de forma ininterrupta, sobrescrevendo automaticamente o arquivo caso `output_image.png` já exista no diretório do projeto.
 
 ---
 
@@ -137,7 +139,7 @@ Além disso:
 
 ## 🤝 Contribuições
 
-- Beatriz Lima de Moura: desenvolvimento do item 5 (equalização do histograma e ajuste de contraste) 
-- Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela) e do item 6 (salva da imagem final em disco)
+- Beatriz Lima de Moura: desenvolvimento do item 5 (equalização do histograma, ajuste de contraste e implementação do botão) 
+- Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela) e do item 6 (salva a imagem final no disco)
 - Julia Santos Oliveira: elaboração estrutural do README.md e desenvolvimento dos itens 1 (carregamento da imagem) e 2 (análise e conversão para escala de cinza)
 - Larissa Yuri Sato: criação do repositório, documentação inicial e desenvolvimento da função do item 3 (GUI)

@@ -159,6 +159,14 @@ int rodarGui(int img_width, int img_height, const int *histogramaInicial, DadosI
                 isRunning = false;
             }
 
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                if (event.key.key == SDLK_S) {
+                    if (IMG_SavePNG(surfaceAtual, "output_image.png") == 0) {
+                        printf("Sucesso! Imagem guardada como 'output_image.png'\n");
+                    }
+                }
+            }
+
             if (event.window.windowID == SDL_GetWindowID(gui.janelaHistograma)) {
                 if (event.type == SDL_EVENT_MOUSE_MOTION) {
                     float mx = event.motion.x;
@@ -236,6 +244,45 @@ int rodarGui(int img_width, int img_height, const int *histogramaInicial, DadosI
             SDL_RenderTexture(gui.rendererHistograma, texTexto, NULL, &rectTexto);
             SDL_DestroyTexture(texTexto);
             SDL_DestroySurface(surfTexto);
+        }
+
+        if (fonte) {
+            double soma = 0;
+            int total_pixels = img_width * img_height;
+            for (int i = 0; i < 256; i++) {
+                soma += (i * histAtual[i]);
+            }
+            double media = soma / total_pixels;
+
+            double soma_var = 0;
+            for (int i = 0; i < 256; i++) {
+                soma_var += pow(i - media, 2) * histAtual[i];
+            }
+            double desvio = sqrt(soma_var / total_pixels);
+
+            char texto_media[100];
+            if (media < 85) sprintf(texto_media, "Intensidade: Escura (Media: %.2f)", media);
+            else if (media < 170) sprintf(texto_media, "Intensidade: Media (Media: %.2f)", media);
+            else sprintf(texto_media, "Intensidade: Clara (Media: %.2f)", media);
+
+            char texto_contraste[100];
+            if (desvio < 40) sprintf(texto_contraste, "Contraste: Baixo (Desvio: %.2f)", desvio);
+            else if (desvio < 80) sprintf(texto_contraste, "Contraste: Medio (Desvio: %.2f)", desvio);
+            else sprintf(texto_contraste, "Contraste: Alto (Desvio: %.2f)", desvio);
+
+            SDL_Surface* surf_media = TTF_RenderText_Solid(fonte, texto_media, 0, corTexto);
+            SDL_Texture* tex_media = SDL_CreateTextureFromSurface(gui.rendererHistograma, surf_media);
+            SDL_FRect rect_media = {10.0f, 10.0f, (float)surf_media->w, (float)surf_media->h};
+            SDL_RenderTexture(gui.rendererHistograma, tex_media, NULL, &rect_media);
+            SDL_DestroyTexture(tex_media);
+            SDL_DestroySurface(surf_media);
+
+            SDL_Surface* surf_contraste = TTF_RenderText_Solid(fonte, texto_contraste, 0, corTexto);
+            SDL_Texture* tex_contraste = SDL_CreateTextureFromSurface(gui.rendererHistograma, surf_contraste);
+            SDL_FRect rect_contraste = {10.0f, 40.0f, (float)surf_contraste->w, (float)surf_contraste->h};
+            SDL_RenderTexture(gui.rendererHistograma, tex_contraste, NULL, &rect_contraste);
+            SDL_DestroyTexture(tex_contraste);
+            SDL_DestroySurface(surf_contraste);
         }
 
         SDL_RenderPresent(gui.rendererHistograma);

@@ -1,0 +1,11 @@
+# Ignorar arquivos executáveis e binários
+*.exe
+*.dll
+
+# Ignorar pastas do VS Code (caminhos locais da Giovana)
+.vscode/
+
+# Ignorar imagens geradas pelos testes locais
+saida.png
+equalizada.png
+output_image.png
