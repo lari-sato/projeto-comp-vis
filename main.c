@@ -45,7 +45,9 @@ int main(int argc, char *argv[]) {
 
     rodarGui(img.imagemCinza->w, img.imagemCinza->h, histograma, &img);
     equalizarImagem(img.imagemCinza, histograma);
-    /* ( 6 vai aqui) */
+    
+    IMG_SavePNG(img.imagemCinza, "equalizada.png");
+    printf("Sucesso! A imagem com super contraste foi salva como equalizada.png\n");
 
     liberarImagem(&img);
     SDL_Quit();
