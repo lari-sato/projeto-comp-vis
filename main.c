@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include "processamento.h"
 
 int main(int argc, char *argv[]) {
@@ -25,10 +26,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (TTF_Init() == -1) {
+        printf("Erro ao inicializar SDL_ttf. Motivo: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    } 
+
     DadosImagem img = {0};
 
     if (!prepararImagem(argv[1], &img)) {
         printf("Erro ao preparar a imagem.\n");
+        TTF_Quit();
         SDL_Quit();
         return 1;
     }
@@ -37,24 +45,16 @@ int main(int argc, char *argv[]) {
     printf("Dimensões: %d x %d\n", img.imagemOriginal->w, img.imagemOriginal->h);
     printf("Já estava em escala de cinza? %s\n", img.ehEscalaCinza ? "Sim" : "Não");
 
-    // Pra testar conversão (dps vamos tirar)
-    IMG_SavePNG(img.imagemCinza, "saida.png");
-    printf("Imagem em escala de cinza salva como saida.png\n");
-
     int histograma[256] = {0};
-
     calcularHistograma(img.imagemCinza, histograma);
     
     int total_pixels = img.imagemCinza->w * img.imagemCinza->h;
     analisarHistograma(histograma, total_pixels);
 
     rodarGui(img.imagemCinza->w, img.imagemCinza->h, histograma, &img);
-    equalizarImagem(img.imagemCinza, histograma);
-    
-    IMG_SavePNG(img.imagemCinza, "equalizada.png");
-    printf("Sucesso! A imagem com super contraste foi salva como equalizada.png\n");
 
     liberarImagem(&img);
+    TTF_Quit();
     SDL_Quit();
 
     return 0;

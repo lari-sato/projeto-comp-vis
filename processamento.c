@@ -121,7 +121,7 @@ bool prepararImagem(const char *caminho, DadosImagem *img) {
     return true;
 }
 
-int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *img) {
+int rodarGui(int img_width, int img_height, const int *histogramaInicial, DadosImagem *img) {
     GUI gui = {0};
 
     if (!SDL_CreateWindowAndRenderer("Processamento de Imagem", img_width, img_height, 0, 
@@ -129,53 +129,65 @@ int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *
         return SDL_APP_FAILURE;
     }
 
-    SDL_Texture *img_texture = SDL_CreateTextureFromSurface(gui.rendererPrincipal, img->imagemCinza);
-
     int hist_width = 700;
     int hist_height = 500;
     gui.janelaHistograma = SDL_CreatePopupWindow(gui.janelaPrincipal, img_width + 50, 0, hist_width, hist_height, SDL_WINDOW_POPUP_MENU);
     gui.rendererHistograma = SDL_CreateRenderer(gui.janelaHistograma, NULL);
 
-    TTF_Init();
     TTF_Font *fonte = TTF_OpenFont("arial.ttf", 20);
     SDL_Color corTexto = {255, 255, 255, 255};
 
-    int total_pixels = img_width * img_height;
-    double soma = 0;
-    for (int i = 0; i < 256; i++) soma += (i * histograma[i]);
-    double media = soma / total_pixels;
-
-    double soma_var = 0;
-    for (int i = 0; i < 256; i++) soma_var += pow(i - media, 2) * histograma[i];
-    double desvio = sqrt(soma_var / total_pixels);
-
-    char texto_media[100];
-    if (media < 85) sprintf(texto_media, "Intensidade: Escura (Media: %.2f)", media);
-    else if (media < 170) sprintf(texto_media, "Intensidade: Media (Media: %.2f)", media);
-    else sprintf(texto_media, "Intensidade: Clara (Media: %.2f)", media);
-
-    char texto_contraste[100];
-    if (desvio < 40) sprintf(texto_contraste, "Contraste: Baixo (Desvio: %.2f)", desvio);
-    else if (desvio < 80) sprintf(texto_contraste, "Contraste: Medio (Desvio: %.2f)", desvio);
-    else sprintf(texto_contraste, "Contraste: Alto (Desvio: %.2f)", desvio);
-
-    SDL_Surface *surf_media = TTF_RenderText_Solid(fonte, texto_media, 0, corTexto);
-    SDL_Texture *tex_media = SDL_CreateTextureFromSurface(gui.rendererHistograma, surf_media);
-    SDL_FRect rect_media = {10, 10, (float)surf_media->w, (float)surf_media->h};
-    SDL_DestroySurface(surf_media);
-
-    SDL_Surface *surf_contraste = TTF_RenderText_Solid(fonte, texto_contraste, 0, corTexto);
-    SDL_Texture *tex_contraste = SDL_CreateTextureFromSurface(gui.rendererHistograma, surf_contraste);
-    SDL_FRect rect_contraste = {10, 40, (float)surf_contraste->w, (float)surf_contraste->h};
-    SDL_DestroySurface(surf_contraste);
-
-    SDL_Event event;
     bool isRunning = true;
+    bool isEqualizada = false;
+    bool mouseEmCima = false;
+    bool botaoClicado = false;
+
+    SDL_FRect botaoRect = { 250.0f, 400.0f, 200.0f, 50.0f };
+    SDL_Event event;
+
+    SDL_Surface* surfaceAtual = img->imagemCinza;
+    SDL_Texture* img_texture = SDL_CreateTextureFromSurface(gui.rendererPrincipal, surfaceAtual);
+    
+    int histAtual[256];
+    for(int i=0; i<256; i++) histAtual[i] = histogramaInicial[i];
+
+    SDL_Surface* surfaceEqualizada = equalizarImagem(img->imagemCinza, histAtual);
 
     while (isRunning) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
                 isRunning = false;
+            }
+
+            if (event.window.windowID == SDL_GetWindowID(gui.janelaHistograma)) {
+                if (event.type == SDL_EVENT_MOUSE_MOTION) {
+                    float mx = event.motion.x;
+                    float my = event.motion.y;
+                    if (mx >= botaoRect.x && mx <= (botaoRect.x + botaoRect.w) &&
+                        my >= botaoRect.y && my <= (botaoRect.y + botaoRect.h)) {
+                        mouseEmCima = true;
+                    } else {
+                        mouseEmCima = false;
+                    }
+                }
+
+                if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && event.button.button == SDL_BUTTON_LEFT) {
+                    if (mouseEmCima) {
+                        botaoClicado = true;
+                        isEqualizada = !isEqualizada;
+
+                        surfaceAtual = isEqualizada ? surfaceEqualizada : img->imagemCinza;
+                        
+                        SDL_DestroyTexture(img_texture);
+                        img_texture = SDL_CreateTextureFromSurface(gui.rendererPrincipal, surfaceAtual);
+
+                        calcularHistograma(surfaceAtual, histAtual);
+                    }
+                }
+
+                if (event.type == SDL_EVENT_MOUSE_BUTTON_UP && event.button.button == SDL_BUTTON_LEFT) {
+                    botaoClicado = false;
+                }
             }
         }
 
@@ -188,35 +200,54 @@ int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *
         SDL_SetRenderDrawColor(gui.rendererHistograma, 50, 50, 50, 255);
         SDL_RenderClear(gui.rendererHistograma);
 
-        SDL_RenderTexture(gui.rendererHistograma, tex_media, NULL, &rect_media);
-        SDL_RenderTexture(gui.rendererHistograma, tex_contraste, NULL, &rect_contraste);
-
-        int bar_x = 10, bar_y = 80, bar_w = 4, bar_h_max = hist_height - 100, num_barras = 64;
+        int bar_x = 10, bar_y = 50, bar_w = 4, bar_h_max = 300, num_barras = 64;
         int max_val = 0;
-        for (int i = 0; i < 256; i++) { if (histograma[i] > max_val) max_val = histograma[i]; }
+        for (int i = 0; i < 256; i++) { if (histAtual[i] > max_val) max_val = histAtual[i]; }
 
         if (max_val > 0) {
             for (int i = 0; i < num_barras; i++) {
                 int index = (i * 256) / num_barras;
-                float ratio = (float)histograma[index] / (float)max_val;
+                float ratio = (float)histAtual[index] / (float)max_val;
                 int bar_h = (int)(ratio * bar_h_max);
                 SDL_SetRenderDrawColor(gui.rendererHistograma, 255, 255, 255, 255);
                 SDL_FRect bar = { (float)(bar_x + i * (bar_w + 1)), (float)(bar_y + bar_h_max - bar_h), (float)bar_w, (float)bar_h };
                 SDL_RenderFillRect(gui.rendererHistograma, &bar);
             }
         }
+
+        if (botaoClicado) {
+            SDL_SetRenderDrawColor(gui.rendererHistograma, 0, 0, 150, 255);
+        } else if (mouseEmCima) {
+            SDL_SetRenderDrawColor(gui.rendererHistograma, 100, 100, 255, 255);
+        } else {
+            SDL_SetRenderDrawColor(gui.rendererHistograma, 0, 0, 255, 255);
+        }
+        SDL_RenderFillRect(gui.rendererHistograma, &botaoRect);
+
+        if (fonte) {
+            const char* textoBotao = isEqualizada ? "Ver original" : "Equalizar";
+            SDL_Surface* surfTexto = TTF_RenderText_Solid(fonte, textoBotao, 0, corTexto);
+            SDL_Texture* texTexto = SDL_CreateTextureFromSurface(gui.rendererHistograma, surfTexto);
+            
+            float tw = (float)surfTexto->w;
+            float th = (float)surfTexto->h;
+            SDL_FRect rectTexto = { botaoRect.x + (botaoRect.w - tw) / 2.0f, botaoRect.y + (botaoRect.h - th) / 2.0f, tw, th };
+            
+            SDL_RenderTexture(gui.rendererHistograma, texTexto, NULL, &rectTexto);
+            SDL_DestroyTexture(texTexto);
+            SDL_DestroySurface(surfTexto);
+        }
+
         SDL_RenderPresent(gui.rendererHistograma);
     }
 
-    SDL_DestroyTexture(tex_media);
-    SDL_DestroyTexture(tex_contraste);
-    TTF_CloseFont(fonte);
-    TTF_Quit();
-
+    if (fonte) TTF_CloseFont(fonte);
+    SDL_DestroyTexture(img_texture);
     SDL_DestroyRenderer(gui.rendererHistograma);
     SDL_DestroyRenderer(gui.rendererPrincipal);
     SDL_DestroyWindow(gui.janelaHistograma);
     SDL_DestroyWindow(gui.janelaPrincipal);
+    if (surfaceEqualizada) SDL_DestroySurface(surfaceEqualizada);
 
     return SDL_APP_SUCCESS;
 }
@@ -280,8 +311,11 @@ void analisarHistograma(int *histograma, int total_pixels) {
     
     printf("\n");
 }
-void equalizarImagem(SDL_Surface *surface, int *histograma) {
-    if (surface == NULL) return;
+
+SDL_Surface* equalizarImagem(SDL_Surface *surface, int *histograma) {
+    if (surface == NULL) return NULL;
+
+    SDL_Surface *novaImagem = SDL_CreateSurface(surface->w, surface->h, surface->format);
 
     int total_pixels = surface->w * surface->h;
     int cdf[256] = {0}; 
@@ -311,9 +345,11 @@ void equalizarImagem(SDL_Surface *surface, int *histograma) {
             Uint8 r, g, b, a;
             if (SDL_ReadSurfacePixel(surface, x, y, &r, &g, &b, &a)) {
                 Uint8 cor_equalizada = (Uint8)nova_cor[r];
-                SDL_WriteSurfacePixel(surface, x, y, cor_equalizada, cor_equalizada, cor_equalizada, a);
+                SDL_WriteSurfacePixel(novaImagem, x, y, cor_equalizada, cor_equalizada, cor_equalizada, a);
             }
         }
     }
-    printf("A imagem foi equalizada com sucesso\n");
+    printf("A imagem foi equalizada com sucesso numa nova surface!\n");
+    
+    return novaImagem; 
 }

@@ -23,13 +23,12 @@ typedef struct {
     SDL_Renderer *rendererHistograma;
 } GUI;
 
-
-
 bool prepararImagem(const char *caminho, DadosImagem *img);
 void liberarImagem(DadosImagem *img);
 int rodarGui(int img_width, int img_height, const int *histograma, DadosImagem *img);
 void calcularHistograma(SDL_Surface *surface, int *histograma);
 void analisarHistograma(int *histograma, int total_pixels);
-void equalizarImagem(SDL_Surface *surface, int *histograma);
+
+SDL_Surface* equalizarImagem(SDL_Surface *surface, int *histograma);
 
 #endif
