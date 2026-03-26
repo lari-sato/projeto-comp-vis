@@ -136,5 +136,5 @@ Além disso:
 
 - Beatriz Lima de Moura: desenvolvimento do item 5 (equalização do histograma e ajuste de contraste) 
 - Giovana Simões Franco: desenvolvimento do item 4 (cálculo estatístico e exibição na tela) e do item 6 (salva da imagem final em disco)
-- Julia Santos Oliveira
+- Julia Santos Oliveira: elaboração estrutural do README.md e desenvolvimento dos itens 1 (carregamento da imagem) e 2 (análise e conversão para escala de cinza)
 - Larissa Yuri Sato: criação do repositório, documentação inicial e desenvolvimento da função do item 3 (GUI)
