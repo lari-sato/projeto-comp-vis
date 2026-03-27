@@ -77,13 +77,11 @@ Por fim, utilizando a biblioteca **SDL3_ttf** e uma fonte (Arial) carregada pelo
 ---
 ### 5. Equalização do histograma
 
-A equalização do histograma foi implementada para melhorar o contraste da imagem. O programa calcula a Frequência Acumulada (CDF - Cumulative Distribution Function) a partir do histograma original.
+A equalização do histograma foi implementada para melhorar o contraste da imagem. Primeiro, a função verifica se a imagem é válida e cria uma nova surface com `SDL_CreateSurface`, onde o resultado será armazenado. Em seguida, calcula o total de pixels e constrói a função de distribuição acumulada (CDF) a partir do histograma, que representa a soma acumulada das intensidades. Também identifica o menor valor não nulo da CDF (cdf_min) para evitar distorções no cálculo.
 
-Aplicando a fórmula matemática de equalização, os tons de cinza são redistribuídos de forma proporcional. Isso "estica" o contraste da imagem, forçando-a a utilizar toda a escala de luminosidade disponível (de 0 a 255), resultando em pretos mais intensos e brancos mais brilhantes.
+Com base nisso, é criado um vetor de mapeamento (nova_cor) que transforma cada intensidade original em uma nova intensidade, usando a fórmula da equalização que normaliza os valores da CDF para o intervalo de 0 a 255. Esse processo redistribui os níveis de cinza, reduzindo concentrações em regiões muito claras ou escuras e aumentando o contraste geral da imagem.
 
-Ela acontece por meio de um botão desenhado manualmente com primitivas da SDL na janela secundária. A interface responde ativamente às ações do usuário: a cor do botão permanece em um azul neutro, muda para azul claro quando o mouse passa por cima e escurece no momento exato do clique. Ao acionar o botão, o programa equaliza o histograma, atualizando instantaneamente a imagem com maior contraste na janela principal e o gráfico esticado na janela secundária. 
-
-Esse botão atua como um interruptor flexível, permitindo que um novo clique reverta o conteúdo de ambas as janelas para a versão original em escala de cinza, sem a necessidade de recarregar a imagem do disco. Para manter a navegação intuitiva, o texto interno do botão reflete dinamicamente a próxima ação possível, alternando entre "Equalizar" e "Ver original".
+Por fim, a função percorre todos os pixels da imagem original, utilizando `SDL_ReadSurfacePixel` para ler os valores de cada pixel e substituindo a intensidade pelo valor correspondente em nova_cor. O novo pixel é então escrito na nova imagem com `SDL_WriteSurfacePixel`, mantendo os três canais iguais (R, G e B) e preservando o alfa. Ao final, retorna a imagem equalizada, com melhor distribuição de intensidades e maior evidência de detalhes.
 
 ---
 ### 6. Salvar imagem
